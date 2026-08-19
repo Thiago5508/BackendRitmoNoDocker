@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 let databaseConnection: Promise<typeof mongoose> | undefined;
 
 export async function connectDatabase() {
+  console.log("🔥🔥🔥 CONNECT DATABASE FOI CHAMADO 🔥🔥🔥");
   if (mongoose.connection.readyState === 1) {
     console.log("[DB] Conexão com o MongoDB já está estabelecida.");
     return mongoose;

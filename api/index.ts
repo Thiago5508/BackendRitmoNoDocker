@@ -5,6 +5,12 @@ export default async function handler(
 	req: Parameters<typeof app>[0],
 	res: Parameters<typeof app>[1]
 ) {
+	console.log("[API] Função Vercel iniciada", {
+		method: req.method,
+		url: req.url,
+		mongodbUriConfigured: Boolean(process.env.MONGODB_URI?.trim()),
+	});
+
 	try {
 		await connectDatabase();
 		return app(req, res);
