@@ -1,12 +1,22 @@
 import mongoose from "mongoose";
 
-export async function connectDatabase() {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI!);
+let databaseConnection: Promise<typeof mongoose> | undefined;
 
-    console.log("MongoDB conectado com sucesso!");
-  } catch (error) {
-    console.error("Erro ao conectar ao MongoDB:", error);
-    process.exit(1);
+export async function connectDatabase() {
+  if (mongoose.connection.readyState === 1) {
+    return mongoose;
   }
+
+  if (!process.env.MONGODB_URI) {
+    throw new Error("MONGODB_URI não configurada");
+  }
+
+  databaseConnection ??= mongoose.connect(process.env.MONGODB_URI, {
+    serverSelectionTimeoutMS: 10_000,
+  });
+
+  await databaseConnection;
+  console.log("MongoDB conectado com sucesso!");
+
+  return mongoose;
 }
