@@ -43,5 +43,12 @@ export async function login(
 
   return {
     token,
+    user: {
+      id: user._id.toString(),
+      nome: user.nome,
+      isProfessor: user.isProfessor,
+      nivel: user.nivel,
+      telefone: user.telefone,
+    },
   };
 }
