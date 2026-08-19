@@ -1,11 +1,13 @@
-import type {CreateUserDTO, UpdateUserDTO} from "../../types/user.js";
+import type { CreateUserDTO, UpdateUserDTO } from "../../types/user.js";
 import { Types } from "mongoose";
 import { UserModel } from "../../models/user.model.js";
 import { CompanyModel } from "../../models/company.model.js";
 import { hashPassword } from "../../utils/password.js";
 
-export async function getUsers(empresaId: Types.ObjectId) {
-  return UserModel.find({ empresaId });
+export async function getUsers(empresaId: string) {
+  return UserModel.find({
+    empresaId: new Types.ObjectId(empresaId),
+  });
 }
 
 export async function getUserById(id: string) {
@@ -26,6 +28,7 @@ export async function createUser(data: CreateUserDTO) {
   if (!companyExists) {
     throw new Error("Empresa não encontrada");
   }
+
   if (data.superiorId !== null) {
     const superiorExists = await UserModel.exists({
       _id: data.superiorId,
@@ -54,13 +57,13 @@ export async function createUser(data: CreateUserDTO) {
 
 export async function updateUser(
   userId: string,
-  empresaId: Types.ObjectId,
+  empresaId: string,
   data: UpdateUserDTO
 ) {
   const user = await UserModel.findOneAndUpdate(
     {
       _id: userId,
-      empresaId,
+      empresaId: new Types.ObjectId(empresaId),
     },
     data,
     {
@@ -82,7 +85,7 @@ export async function deleteUser(
 ) {
   const user = await UserModel.findOneAndDelete({
     _id: userId,
-    empresaId,
+    empresaId: new Types.ObjectId(empresaId),
   });
 
   if (!user) {

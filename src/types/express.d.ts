@@ -1,4 +1,4 @@
-import type { JwtPayload } from "jsonwebtoken";
+import type { AuthPayload } from "./auth.js";
 
 declare global {
   namespace Express {
