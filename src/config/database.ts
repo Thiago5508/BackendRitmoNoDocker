@@ -4,6 +4,7 @@ let databaseConnection: Promise<typeof mongoose> | undefined;
 
 export async function connectDatabase() {
   if (mongoose.connection.readyState === 1) {
+    console.log("[DB] Conexão com o MongoDB já está estabelecida.");
     return mongoose;
   }
 
@@ -26,7 +27,7 @@ export async function connectDatabase() {
     throw new Error("Não foi possível conectar ao MongoDB");
   }
 
-  console.log("MongoDB conectado com sucesso!");
+  console.log("[DB] Conexão estabelecida com o MongoDB com sucesso.");
 
   return mongoose;
 }
