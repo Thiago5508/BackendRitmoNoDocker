@@ -7,15 +7,25 @@ export async function connectDatabase() {
     return mongoose;
   }
 
-  if (!process.env.MONGODB_URI) {
+  const mongodbUri = process.env.MONGODB_URI?.trim();
+
+  if (!mongodbUri) {
     throw new Error("MONGODB_URI não configurada");
   }
 
-  databaseConnection ??= mongoose.connect(process.env.MONGODB_URI, {
-    serverSelectionTimeoutMS: 10_000,
+  databaseConnection ??= mongoose.connect(mongodbUri, {
+    serverSelectionTimeoutMS: 5_000,
+    connectTimeoutMS: 5_000,
   });
 
-  await databaseConnection;
+  try {
+    await databaseConnection;
+  } catch (error) {
+    databaseConnection = undefined;
+    console.error("Erro ao conectar ao MongoDB:", error);
+    throw new Error("Não foi possível conectar ao MongoDB");
+  }
+
   console.log("MongoDB conectado com sucesso!");
 
   return mongoose;
