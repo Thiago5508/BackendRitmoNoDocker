@@ -52,3 +52,13 @@ export async function login(
     },
   };
 }
+
+export async function getAuthenticatedUser(userId: string) {
+  const user = await UserModel.findById(userId);
+
+  if (!user) {
+    throw new Error("Usuário não encontrado");
+  }
+
+  return user;
+}
