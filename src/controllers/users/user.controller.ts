@@ -57,6 +57,7 @@ export async function createUserController(
     const user = await createUser({
       ...req.body,
       empresaId: req.body.empresaId ?? req.user.empresaId,
+      superiorId: req.user.userId,
     });
 
     const userResponse = user.toObject();
