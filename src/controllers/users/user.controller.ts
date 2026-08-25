@@ -54,11 +54,14 @@ export async function createUserController(
       return;
     }
 
-    const user = await createUser({
+    const data = {
       ...req.body,
       empresaId: req.body.empresaId ?? req.user.empresaId,
       superiorId: req.user.userId,
-    });
+      isProfessor: req.body.isProfessor ?? false,
+    };
+
+    const user = await createUser(data);
 
     const userResponse = user.toObject();
 
