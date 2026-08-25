@@ -47,7 +47,17 @@ export async function createUserController(
   res: Response
 ) {
   try {
-    const user = await createUser(req.body);
+    if (!req.user) {
+      res.status(401).json({
+        message: "Usuário não autenticado",
+      });
+      return;
+    }
+
+    const user = await createUser({
+      ...req.body,
+      empresaId: req.body.empresaId ?? req.user.empresaId,
+    });
 
     const userResponse = user.toObject();
 
@@ -60,9 +70,8 @@ export async function createUserController(
       error.message === "Empresa não encontrada"
     ) {
       res.status(400).json({
-        message: error.message
+        message: error.message,
       });
-
       return;
     }
 
@@ -71,14 +80,13 @@ export async function createUserController(
       error.message === "Usuário superior não encontrado"
     ) {
       res.status(400).json({
-        message: error.message
+        message: error.message,
       });
-
       return;
     }
 
     res.status(500).json({
-      message: "Erro interno do servidor"
+      message: "Erro interno do servidor",
     });
   }
 }
