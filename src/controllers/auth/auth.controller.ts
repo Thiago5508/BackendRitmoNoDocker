@@ -48,6 +48,8 @@ export async function meController(
         isProfessor: userResponse.isProfessor,
         nivel: userResponse.nivel,
         telefone: userResponse.telefone,
+        empresaId: userResponse.empresaId.toString(),
+        superiorId: userResponse.superiorId?.toString() ?? null,
       },
     });
   } catch (error) {

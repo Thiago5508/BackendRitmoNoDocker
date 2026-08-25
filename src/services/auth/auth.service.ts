@@ -45,6 +45,8 @@ export async function login(
     token,
     user: {
       id: user._id.toString(),
+      superiorId: user.superiorId?.toString() ?? null,
+      empresaId: user.empresaId.toString(),
       nome: user.nome,
       isProfessor: user.isProfessor,
       nivel: user.nivel,
