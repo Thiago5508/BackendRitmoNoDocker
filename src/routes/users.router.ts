@@ -12,7 +12,7 @@ import {
 const router = Router();
 
 router.get("/",authMiddleware, getUsersController);
-router.post("/",createUserController);
+router.post("/",authMiddleware,createUserController);
 router.patch("/:id",authMiddleware,updateUserController);
 router.delete("/:id",authMiddleware,deleteUserController);
 router.get("/:id",authMiddleware,getUserByIdController);
