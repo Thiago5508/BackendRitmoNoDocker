@@ -1,9 +1,16 @@
 
 import { isValidObjectId } from "mongoose";
-import {RoutineModel} from "../../models/weekdays.model.js";
+import { RoutineModel } from "../../models/weekdays.model.js";
 import { weekdays, type DiaSemana } from "../../types/weekdays.js";
 
 type Nivel = "iniciante" | "intermediario" | "avancado";
+
+type TreinoDia = {
+  icon: string;
+  descricao: string;
+};
+
+type Treinos = Partial<Record<DiaSemana, TreinoDia>>;
 
 function validarDiasSemana(dias: unknown): dias is DiaSemana[] {
   return (
@@ -14,14 +21,51 @@ function validarDiasSemana(dias: unknown): dias is DiaSemana[] {
   );
 }
 
+function validarTreinos(treinos: unknown): treinos is Treinos {
+  if (
+    typeof treinos !== "object" ||
+    treinos === null ||
+    Array.isArray(treinos)
+  ) {
+    return false;
+  }
+
+  return Object.entries(treinos).every(([dia, treino]) => {
+    if (!weekdays.includes(dia as DiaSemana)) {
+      return false;
+    }
+
+    if (
+      typeof treino !== "object" ||
+      treino === null ||
+      Array.isArray(treino)
+    ) {
+      return false;
+    }
+
+    const item = treino as Record<string, unknown>;
+
+    return (
+      typeof item.icon === "string" &&
+      item.icon.trim().length > 0 &&
+      typeof item.descricao === "string"
+    );
+  });
+}
+
 // Criar rotina
 export async function criarRotina(
   empresaId: string,
   nivel: Nivel,
-  diasSemana: DiaSemana[]
+  diasSemana: DiaSemana[],
+  treinos: unknown = {}
 ) {
   if (!validarDiasSemana(diasSemana)) {
     throw new Error("Informe dias válidos e sem duplicidade.");
+  }
+
+  if (!validarTreinos(treinos)) {
+    throw new Error("Os dados dos treinos são inválidos.");
   }
 
   const rotinaExistente = await RoutineModel.findOne({
@@ -37,6 +81,7 @@ export async function criarRotina(
     empresaId,
     nivel,
     diasSemana,
+    treinos,
   });
 }
 
@@ -60,7 +105,8 @@ export async function buscarRotinaPorNivel(
 export async function atualizarRotina(
   rotinaId: string,
   empresaId: string,
-  diasSemana: DiaSemana[]
+  diasSemana: DiaSemana[],
+  treinos?: unknown
 ) {
   if (!isValidObjectId(rotinaId)) {
     throw new Error("ID de rotina inválido.");
@@ -70,10 +116,34 @@ export async function atualizarRotina(
     throw new Error("Informe dias válidos e sem duplicidade.");
   }
 
+  const dadosAtualizacao: {
+    diasSemana: DiaSemana[];
+    treinos?: Treinos;
+  } = {
+    diasSemana,
+  };
+
+  // Só atualiza os treinos se o campo foi enviado
+  if (treinos !== undefined) {
+    if (!validarTreinos(treinos)) {
+      throw new Error("Os dados dos treinos são inválidos.");
+    }
+
+    dadosAtualizacao.treinos = treinos;
+  }
+
   const rotina = await RoutineModel.findOneAndUpdate(
-    { _id: rotinaId, empresaId },
-    { diasSemana },
-    { new: true, runValidators: true }
+    {
+      _id: rotinaId,
+      empresaId,
+    },
+    {
+      $set: dadosAtualizacao,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
   );
 
   if (!rotina) {

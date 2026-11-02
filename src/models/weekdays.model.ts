@@ -2,6 +2,24 @@
 import { Schema, model } from "mongoose";
 import { weekdays } from "../types/weekdays.js";
 
+const treinoDiaSchema = new Schema(
+  {
+    icon: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    descricao: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+  },
+  {
+    _id: false,
+  }
+);
+
 const routineSchema = new Schema(
   {
     empresaId: {
@@ -30,6 +48,13 @@ const routineSchema = new Schema(
           dias.length > 0 && new Set(dias).size === dias.length,
         message: "Informe dias válidos e sem duplicidade.",
       },
+    },
+
+    // Treinos cadastrados para cada dia da semana
+    treinos: {
+      type: Map,
+      of: treinoDiaSchema,
+      default: {},
     },
   },
   {

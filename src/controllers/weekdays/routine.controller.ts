@@ -27,7 +27,7 @@ export async function criarRotinaController(
       });
     }
 
-    const { nivel, diasSemana } = req.body;
+    const { nivel, diasSemana, treinos } = req.body;
 
     if (!niveisValidos.includes(nivel)) {
       return res.status(400).json({
@@ -38,7 +38,8 @@ export async function criarRotinaController(
     const rotina = await criarRotina(
       req.user.empresaId,
       nivel,
-      diasSemana
+      diasSemana,
+      treinos
     );
 
     return res.status(201).json(rotina);
@@ -65,7 +66,9 @@ export async function listarRotinasController(
     const rotinas = await listarRotinas(req.user.empresaId);
 
     return res.status(200).json(rotinas);
-  } catch {
+  } catch (error) {
+    console.error("Erro ao listar rotinas:", error);
+
     return res.status(500).json({
       message: "Erro ao listar rotinas.",
     });
@@ -90,7 +93,9 @@ export async function minhaRotinaController(
     }
 
     return res.status(200).json(rotina);
-  } catch {
+  } catch (error) {
+    console.error("Erro ao consultar rotina:", error);
+
     return res.status(500).json({
       message: "Erro ao consultar rotina.",
     });
@@ -109,10 +114,13 @@ export async function atualizarRotinaController(
       });
     }
 
+    const { diasSemana, treinos } = req.body;
+
     const rotina = await atualizarRotina(
       req.params.id as string,
       req.user.empresaId,
-      req.body.diasSemana
+      diasSemana,
+      treinos
     );
 
     return res.status(200).json(rotina);
