@@ -4,6 +4,7 @@ import companiesRouter from "./companies.router.js";
 import authRouter from "./auth.router.js";
 import { healthCheck } from "../controllers/health.controller.js";
 import routineRouter from "./routines.router.js";
+import eventRouter from "./event.router.js";
 
 const router = Router();
 
@@ -12,5 +13,6 @@ router.use("/users", usersRouter);
 router.use("/companies", companiesRouter);
 router.use("/auth", authRouter);
 router.use("/routines", routineRouter);
+router.use("/events", eventRouter);
 
 export default router;
