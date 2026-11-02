@@ -34,6 +34,8 @@ export async function login(
     {
       userId: user._id.toString(),
       empresaId: user.empresaId.toString(),
+      isProfessor: user.isProfessor,
+      nivel: user.nivel,
     },
     JWT_SECRET,
     {

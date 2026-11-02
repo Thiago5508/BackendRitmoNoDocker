@@ -40,7 +40,9 @@ export function authMiddleware(
     if (
       typeof decoded !== "object" ||
       !("userId" in decoded) ||
-      !("empresaId" in decoded)
+      !("empresaId" in decoded)||
+      !("isProfessor" in decoded) ||
+      !("nivel" in decoded)
     ) {
       res.status(401).json({
         message: "Token inválido",
@@ -52,6 +54,8 @@ export function authMiddleware(
     req.user = {
       userId: String(decoded.userId),
       empresaId: String(decoded.empresaId),
+      isProfessor: decoded.isProfessor,
+      nivel: decoded.nivel as AuthPayload["nivel"],
     };
 
     next();

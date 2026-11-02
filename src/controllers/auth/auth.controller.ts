@@ -8,7 +8,6 @@ export async function loginController(
 ) {
   try {
     const { telefone, senha } = req.body;
-
     const result = await login(telefone, senha);
 
     res.json(result);

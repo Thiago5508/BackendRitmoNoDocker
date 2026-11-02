@@ -1,5 +1,4 @@
 import { Schema, model } from "mongoose";
-import type { UserLevel } from "../types/user.js";
 
 const userSchema = new Schema(
   {
